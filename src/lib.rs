@@ -68,20 +68,20 @@ where
     }
 }
 
-pub struct RequestFlake<C, T> {
-    object: T,
+pub struct RequestFlake<C: Constructor> {
+    object: C::Target,
     phantom: PhantomData<C>,
 }
 
-impl<C, T> RequestFlake<C, T>
+impl<C> RequestFlake<C>
 where
-    C: Fn() -> T,
+    C: Constructor,
 {
-    pub fn get(&self) -> &T {
+    pub fn get(&self) -> &C::Target {
         &self.object
     }
 
-    pub fn get_mut(&mut self) -> &mut T {
+    pub fn get_mut(&mut self) -> &mut C::Target {
         &mut self.object
     }
 }
@@ -93,7 +93,7 @@ pub trait Constructor {
 }
 
 #[async_trait]
-impl<C, T, B> FromRequest<B> for RequestFlake<C, T>
+impl<C, T, B> FromRequest<B> for RequestFlake<C>
 where
     T: Send,
     C: Constructor<Target = T> + Send + Sync + 'static,

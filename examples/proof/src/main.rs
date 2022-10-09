@@ -37,8 +37,19 @@ impl Constructor for MyConstructor {
 
 async fn service(
     singleton: SingletonFlake<Message>,
-    flake: TransientFlake<MyConstructor>,
+    transient: TransientFlake<MyConstructor>,
+    request: RequestFlake<MyConstructor>,
 ) -> impl IntoResponse {
-    let message = flake.get().await;
-    message.0 + " " + singleton.get().0.as_str()
+    let debug_transient = transient.get().await.0;
+    let debug_transient_2 = transient.get().await.0;
+    let debug_request = &request.get().0;
+    let debug_request_2 = &request.get().0;
+    let debug_singleton = &singleton.get().0;
+    dbg!(
+        debug_transient,
+        debug_transient_2,
+        debug_request,
+        debug_request_2,
+        debug_singleton
+    );
 }
