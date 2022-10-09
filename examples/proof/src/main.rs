@@ -4,7 +4,7 @@ use winter::*;
 #[tokio::main]
 async fn main() {
     let router = Router::new()
-        .route("/", get(service))
+        .route("/", get(handler))
         .layer(Extension(MyConstructor))
         .layer(Extension(Message(uuid::Uuid::new_v4().to_string())));
 
@@ -17,11 +17,6 @@ async fn main() {
 #[derive(Clone)]
 struct Message(String);
 
-fn message() -> Message {
-    let random = uuid::Uuid::new_v4();
-    Message(format!("hello[{random}]"))
-}
-
 #[derive(Debug, Clone)]
 struct MyConstructor;
 
@@ -31,11 +26,12 @@ impl Constructor for MyConstructor {
 
     async fn build(&self) -> Self::Target {
         dbg!("running MyConstructor");
-        message()
+        let random = uuid::Uuid::new_v4();
+        Message(format!("hello[{random}]"))
     }
 }
 
-async fn service(
+async fn handler(
     singleton: SingletonFlake<Message>,
     transient: TransientFlake<MyConstructor>,
     request: RequestFlake<MyConstructor>,
