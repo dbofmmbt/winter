@@ -1,5 +1,3 @@
-use std::{future::Future, task::Poll};
-
 use axum::{async_trait, response::IntoResponse, routing::get, Extension, Router};
 use winter::*;
 
@@ -43,15 +41,4 @@ async fn service(
 ) -> impl IntoResponse {
     let message = flake.get().await;
     message.0 + " " + singleton.get().0.as_str()
-}
-
-impl Future for MyConstructor {
-    type Output = Message;
-
-    fn poll(
-        self: std::pin::Pin<&mut Self>,
-        _cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<Self::Output> {
-        Poll::Ready(message())
-    }
 }

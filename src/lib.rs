@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, sync::Arc};
+use std::marker::PhantomData;
 
 use async_trait::async_trait;
 use axum_core::extract::{FromRequest, RequestParts};
